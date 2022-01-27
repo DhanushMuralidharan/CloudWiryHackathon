@@ -1,6 +1,5 @@
-from fastapi import FastAPI
-
-app = FastAPI()
+from config import app,db
+print("The API Server is running!")
 
 
 @app.get("/")
