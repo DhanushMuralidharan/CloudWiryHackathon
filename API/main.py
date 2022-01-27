@@ -20,4 +20,16 @@ async def create(info:Request):
         return {"message":"Account Successfully Created!","code":"success"}
     else:
         return {"message":"An account with the email ID already exists!","code":"failure"}
-    
+
+@app.get("/get_user_pw")
+async def user_pw(info:Request):
+    details = await info.json() 
+    print([user.email for user in User.query.all()])
+    print(details['email'])
+    if details['email'] not in [user.email for user in User.query.all()]:
+        return {"message":"The account does not exist!","code":"failure"}
+    else:
+        user = User.query.filter(User.email == details['email']).one()
+        return {"password":user.password,"status":"success","message":"password has been sent!"}
+
+   

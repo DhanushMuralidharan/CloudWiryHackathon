@@ -11,9 +11,7 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@app.route('/login')
-def login():
-    return render_template('login.html')
+
 
 @app.route('/signup',methods = ['GET','POST'])
 def signup():
@@ -37,6 +35,28 @@ def signup():
         else:
             print("Password mismatch")
             return render_template('signup.html')
+
+@app.route('/login',methods = ['GET','POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    elif request.method == 'POST':
+        data = {}
+        data['email'] = request.form.get('email')
+        password = request.form.get('psw')
+        data = json.dumps(data)
+        response = json.loads(requests.get('http://127.0.0.1:8000/get_user_pw',data = data).text)
+        print(response)
+
+        if response['status'] == 'success':
+            if check_password_hash(response['password'],password):
+                print("Successfully authenticated!")
+                return render_template('home.html')
+            else:
+                print("Invalid Login credentials!")
+        else:
+            return render_template('signup.html')
+
 
 if __name__ == '__main__':
   app.run(debug=True,port=8001,host='127.0.0.1')
