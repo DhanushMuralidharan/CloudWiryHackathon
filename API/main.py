@@ -30,6 +30,6 @@ async def user_pw(info:Request):
         return {"message":"The account does not exist!","code":"failure"}
     else:
         user = User.query.filter(User.email == details['email']).one()
-        return {"password":user.password,"status":"success","message":"password has been sent!"}
+        return {"password":user.password,"code":"success","message":"password has been sent!"}
 
    
