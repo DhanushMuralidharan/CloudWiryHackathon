@@ -1,10 +1,8 @@
 from config import app,db
 from fastapi import Request
 print("The API Server is running!")
-from models import User
+from models import user,file
 import datetime
-
-print(User.query.all())
 
 @app.get("/")
 async def root():
@@ -13,9 +11,9 @@ async def root():
 @app.post("/create_user")
 async def create(info:Request):
     details = await info.json()
-    if details['email'] not in [user.email for user in User.query.all()]:
-        user = User(details['email'],details['name'],details['password'],datetime.date.today())
-        db.session.add(user)
+    if details['email'] not in [u.email for u in user.query.all()]:
+        u = user(details['email'],details['name'],details['password'],datetime.date.today())
+        db.session.add(u)
         db.session.commit()
         return {"message":"Account Successfully Created!","code":"success"}
     else:
@@ -24,12 +22,11 @@ async def create(info:Request):
 @app.get("/get_user_pw")
 async def user_pw(info:Request):
     details = await info.json() 
-    print([user.email for user in User.query.all()])
     print(details['email'])
-    if details['email'] not in [user.email for user in User.query.all()]:
+    if details['email'] not in [u.email for u in user.query.all()]:
         return {"message":"The account does not exist!","code":"failure"}
     else:
-        user = User.query.filter(User.email == details['email']).one()
-        return {"password":user.password,"code":"success","message":"password has been sent!"}
+        u = user.query.filter(user.email == details['email']).one()
+        return {"password":u.password,"code":"success","message":"password has been sent!"}
 
    
