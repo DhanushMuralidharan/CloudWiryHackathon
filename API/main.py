@@ -4,6 +4,7 @@ print("The API Server is running!")
 from models import user,file
 import datetime
 import json
+import base64
 
 
 @app.get("/")
@@ -70,4 +71,20 @@ async def get_file(info:Request):
         return {"message":"The file does not exist.","code":"failure"}
     else:
         f = file.query.filter(file.inode == file_id).one()
-        return json.dumps({'name':f.name,'inode':f.inode,'data':f.data.decode(),'date-created':f.date_created,'date-modified':f.date_modified,'owner':f.owner})
+        data = base64.b64encode(f.data).decode('utf-8')
+        return json.dumps({'name':f.name,'inode':f.inode,'data': data,'date-created':f.date_created,'date-modified':f.date_modified,'owner':f.owner})
+
+@app.get("/get_user_files")
+async def get_user_files(info:Request):
+    details = await info.json()
+    u_email = details['user']
+    if u_email not in [f.owner for f in file.query.all()]:
+        return {"message":"The user does not exist.","code":"failure"}
+    else:
+        f = file.query.filter(file.owner == u_email)
+        data = []
+        for FILE in f:
+            d = base64.b64encode(FILE.data).decode('utf-8')
+            temp = {'name':FILE.name,'inode':FILE.inode,'data': d,'date-created':FILE.date_created,'date-modified':FILE.date_modified,'owner':FILE.owner}
+            data.append(temp)
+        return json.dumps(data)
