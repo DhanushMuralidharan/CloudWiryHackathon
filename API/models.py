@@ -24,11 +24,13 @@ class file(db.Model):
     date_created = db.Column(db.Text)
     date_modified = db.Column(db.Text)
     owner = db.Column(db.Integer,ForeignKey('user.email'),nullable=False)
+    data = db.Column(db.LargeBinary)
     FileOwner = relationship('user',back_populates = "files")
-    def __init__(self,name,owner):
+    def __init__(self,name,owner,data):
         self.name = name
         self.owner = owner
-        self.inode = uuid1()
+        self.inode = str(uuid1())
+        self.data = data
         self.date_created = datetime.date.today()
         self.date_modified = datetime.date.today()
 
