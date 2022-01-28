@@ -4,6 +4,7 @@ print("The API Server is running!")
 from models import user,file
 import datetime
 import json
+import base64
 
 
 @app.get("/")
@@ -33,7 +34,7 @@ async def user_pw(info:Request):
 @app.post("/create_file")
 async def create_file(info:Request):
     details = await info.json()
-    f = file(details['name'],details['owner'],bytes(details['data'],'utf-8'))
+    f = file(details['name'],details['owner'],details['data'])
     db.session.add(f)
     db.session.commit()
     return {"message":"File Successfully Created!","code":"success"}
@@ -70,4 +71,5 @@ async def get_file(info:Request):
         return {"message":"The file does not exist.","code":"failure"}
     else:
         f = file.query.filter(file.inode == file_id).one()
-        return json.dumps({'name':f.name,'inode':f.inode,'data':f.data.decode(),'date-created':f.date_created,'date-modified':f.date_modified,'owner':f.owner})
+        data = base64.b64encode(f.data).decode('utf-8')
+        return json.dumps({'name':f.name,'inode':f.inode,'data': data,'date-created':f.date_created,'date-modified':f.date_modified,'owner':f.owner})
