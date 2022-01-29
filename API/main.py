@@ -34,7 +34,7 @@ async def user_pw(info:Request):
 @app.post("/create_file")
 async def create_file(info:Request):
     details = await info.json()
-    f = file(details['name'],details['owner'],bytes(details['data'],'utf-8'))
+    f = file(details['name'],details['owner'],details['data'])
     db.session.add(f)
     db.session.commit()
     return {"message":"File Successfully Created!","code":"success"}
