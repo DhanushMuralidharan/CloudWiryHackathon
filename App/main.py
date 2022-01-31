@@ -73,13 +73,15 @@ def login():
 
 @app.route('/home',methods=['GET','POST'])
 def home():
+    if 'user' not in session.keys() or session['user'] is None:        
+        return redirect(url_for('index'))
     if request.method == 'GET':
         data = {}
         data['user'] = session['user']
         data = json.dumps(data)
         files = json.loads(requests.get('http://127.0.0.1:8000/get_user_files',data = data).json())
         print(type(files))
-        return render_template('home.html',files = files)
+        return render_template('home.html',files = files,user=session['user'])
     elif request.method == 'POST':
         f = request.files['file']
         if f.filename != '':
@@ -94,6 +96,8 @@ def home():
 
 @app.route('/delete_file/<inode>')
 def delete_file(inode):
+    if 'user' not in session.keys() or session['user'] is None:        
+        return redirect(url_for('index'))
     data = json.dumps({'file_id':inode})
     file = json.loads(requests.get('http://127.0.0.1:8000/get_file',data = data).json())
     if file['owner'] == session['user']:
@@ -104,6 +108,8 @@ def delete_file(inode):
 
 @app.route('/download_file/<inode>')
 def download_file(inode):
+    if 'user' not in session.keys() or session['user'] is None:        
+        return redirect(url_for('index'))
     data = {}
     data['file_id'] = inode
     data = json.dumps(data)
@@ -117,6 +123,8 @@ def download_file(inode):
 
 @app.route('/rename_file/<inode>',methods=['GET','POST'])
 def rename_file(inode):
+    if 'user' not in session.keys() or session['user'] is None:        
+        return redirect(url_for('index'))
     if request.form.get('name') != '':
         data = json.dumps({'file_id':inode,'name':request.form.get('name')})
         file = json.loads(requests.get('http://127.0.0.1:8000/get_file',data = data).json())

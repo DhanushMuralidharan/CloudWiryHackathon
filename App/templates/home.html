@@ -14,11 +14,13 @@
 <body>
     <a href="{{url_for('logout')}}"><button>Logout!</button></a>
     <h2>Welcome to Cloud Dock!</h2>
-
+    <h4>Current user: {{user}}</h4>
     <form action = "{{url_for('home')}}" method = "POST" enctype = "multipart/form-data">
     <input type = "file" name = "file" />
     <input type = "submit" value="Upload!">
     </form>
+
+    {% if files %}
     <h3>Total: {{files|length}} files</h3>
     <br>
     <table>
@@ -38,6 +40,10 @@
             <td><a href="{{url_for('delete_file',inode=f.inode)}}">Delete</a></td>
         </tr>
         {% endfor %}
+
+    {% else %}
+        <h3>No files have been added yet!</h3>
+    {% endif %}
     </table>
 
 </body>
