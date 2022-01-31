@@ -5,10 +5,40 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Landed</title>
+    <style>
+        table,th,td {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 <body>
     <a href="{{url_for('logout')}}"><button>Logout!</button></a>
+    <h2>Welcome to Cloud Dock!</h2>
+
+    <form action = "{{url_for('home')}}" method = "POST" enctype = "multipart/form-data">
+    <input type = "file" name = "file" />
+    <input type = "submit" value="Upload!">
+    </form>
+    <h3>Total: {{files|length}} files</h3>
     <br>
-    You have successfully authenticated with your account!!
+    <table>
+        <th>File Name</th>
+        <th>Date Created</th>
+        <th>Date Modified</th>
+        <th>Download</th>
+        <th>Rename</th>
+        <th>Delete</th>
+        {% for f in files %}
+        <tr>
+            <td>{{f.name}}</td>
+            <td>{{f['date-created']}}</td>
+            <td>{{f['date-modified']}}</td>
+            <td><a href="{{url_for('download_file',inode=f.inode)}}">Download</a></td>
+            <td><form action="{{url_for('rename_file',inode=f.inode)}}" method= "POST"><input type="submit" value="Rename"><input type="text" name="name" placeholder="New-name"></form></td>
+            <td><a href="{{url_for('delete_file',inode=f.inode)}}">Delete</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+
 </body>
 </html>

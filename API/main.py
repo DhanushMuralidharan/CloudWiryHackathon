@@ -1,10 +1,12 @@
+from urllib import request
 from config import app,db
 from fastapi import Request
-print("The API Server is running!")
 from models import user,file
 import datetime
 import json
 import base64
+
+print("The API Server is running!")
 
 
 @app.get("/")
@@ -34,7 +36,7 @@ async def user_pw(info:Request):
 @app.post("/create_file")
 async def create_file(info:Request):
     details = await info.json()
-    f = file(details['name'],details['owner'],details['data'])
+    f = file(details['name'],details['owner'],base64.b64decode(details['data']))
     db.session.add(f)
     db.session.commit()
     return {"message":"File Successfully Created!","code":"success"}
@@ -48,10 +50,11 @@ async def rename_file(info:Request):
     else:
         f = file.query.filter(file.inode == file_id).one()
         f.name = details['name']
+        f.date_modified = datetime.date.today()
         db.session.commit()
         return {"message":"file has been renamed successfully!","code":"success"}
 
-@app.post("/delete_file")
+@app.get("/delete_file")
 async def delete_file(info:Request):
     details = await info.json()
     file_id = details['file_id']
@@ -78,7 +81,7 @@ async def get_file(info:Request):
 async def get_user_files(info:Request):
     details = await info.json()
     u_email = details['user']
-    if u_email not in [f.owner for f in file.query.all()]:
+    if u_email not in [u.email for u in user.query.all()]:
         return {"message":"The user does not exist.","code":"failure"}
     else:
         f = file.query.filter(file.owner == u_email)
