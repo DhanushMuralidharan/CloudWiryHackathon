@@ -31,9 +31,11 @@ The Application contains 3 layers in total.
 
 Once a user is authenticated, they can,
 
- - **Upload New files:** One can upload files of any type which includes but not limited to, .txt,.c,.php,.py,.html,.pdf etc!
- - **Rename existing files:** Files that already exist in the database can be renamed with no effort!
- - **Delete files:** You can permanently remove files from the database. But watch out! We don't do recycle bin, trash here!
+- **Upload New files:** One can upload files of any type which includes but not limited to, .txt,.c,.php,.py,.html,.pdf etc!
+- **Download files:** Download files from the server to your system. File downloads to your default downloads folder!
+- **Rename existing files:** Files that already exist in the database can be renamed with no effort!
+- **Delete files:** You can permanently remove files from the database. But watch out! We don't do recycle bin, trash here!
+
 
 *Note: The application allows you to have multiple files with the same file names. As long as you are able to identify them, we are good!*
 
