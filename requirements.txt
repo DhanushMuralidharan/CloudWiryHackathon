@@ -1,2 +1,7 @@
 python
 flask
+Flask-SQLAlchemy
+SQLAlchemy
+Werkzeug
+fastapi
+uvicorn
