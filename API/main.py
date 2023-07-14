@@ -5,6 +5,38 @@ from models import user,file
 import datetime
 import json
 import base64
+# from cryptography.fernet import Fernet
+# from cryptography.hazmat.primitives import hashes
+# from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+# from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+# password='secretkeypassword'
+
+# def generate_key(password, salt):
+#     kdf = PBKDF2HMAC(
+#         algorithm=hashes.SHA256(),
+#         length=32,
+#         salt=salt,
+#         iterations=100000,
+#     )
+#     return kdf.derive(password)
+
+
+# def encrypt(message, password):
+#     salt = b'salt_'
+#     key = generate_key(password.encode(), salt)
+#     cipher_suite = Fernet(key)
+#     cipher_text = cipher_suite.encrypt(message.encode())
+#     return cipher_text
+
+
+# def decrypt(cipher_text, password):
+#     salt = b'salt_'
+#     key = generate_key(password.encode(), salt)
+#     cipher_suite = Fernet(key)
+#     plain_text = cipher_suite.decrypt(cipher_text)
+#     return plain_text.decode()
+
+
 
 print("The API Server is running!")
 
