@@ -9,6 +9,35 @@ import json
 from config import app
 import os
 import base64
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+password='secretkeypassword'
+
+def generate_key(password, salt):
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=100000,
+    )
+    key = kdf.derive(password)
+    return base64.urlsafe_b64encode(key)
+
+def encrypt(message, password):
+    salt = b'salt_'
+    key = generate_key(password.encode(), salt)
+    cipher_suite = Fernet(key)
+    cipher_text = cipher_suite.encrypt(message)
+    return cipher_text
+
+def decrypt(cipher_text, password):
+    salt = b'salt_'
+    key = generate_key(password.encode(), salt)
+    cipher_suite = Fernet(key)
+    plain_text = cipher_suite.decrypt(cipher_text)
+    return plain_text
 
 @app.route('/')
 def index():
@@ -87,6 +116,7 @@ def home():
         if f.filename != '':
             obj = {}
             obj['data'] = f.read()
+            obj['data'] = encrypt(obj['data'],password)
             obj['data'] = base64.b64encode(obj['data']).decode('utf-8')
             obj['name'] = secure_filename(f.filename)
             obj['owner'] = session['user']
@@ -114,10 +144,10 @@ def download_file(inode):
     data['file_id'] = inode
     data = json.dumps(data)
     file = json.loads(requests.get('http://127.0.0.1:8000/get_file',data = data).json())
-    os.system('mkfir files; cd files; mkdir '+file['owner']+'; cd '+file['owner']+'; mkdir '+file['inode'])
+    os.system('mkdir files; cd files; mkdir '+file['owner']+'; cd '+file['owner']+'; mkdir '+file['inode'])
     print(file)
     f = open("files/"+file['owner']+'/'+file['inode']+'/'+file['name'],'wb')
-    f.write(base64.b64decode(file['data']))
+    f.write(decrypt(base64.b64decode(file['data']),password))
     f.close()
     return send_file("files/"+file['owner']+'/'+file['inode']+'/'+file['name'],as_attachment=True)
 
